@@ -106,6 +106,37 @@ public class BookControllerIntegrationTests {
     }
 
     @Test
+    void testThatGetAllBooksReturnsListOfAllBooksWhenTheyExist() throws Exception {
+        AuthorEntity authorA = TestDataUtil.createTestAuthorA();
+        authorA = authorService.create(authorA);
+
+        BookEntity bookA = TestDataUtil.createTestBookA(authorA);
+        bookA = bookService.create(bookA);
+        BookDto bookDtoA = bookMapper.mapTo(bookA);
+
+        BookEntity bookB = TestDataUtil.createTestBookB(authorA);
+        bookB = bookService.create(bookB);
+        BookDto bookDtoB = bookMapper.mapTo(bookB);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(apiPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.empty").value(false)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.numberOfElements").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.totalElements").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[0]").value(bookDtoA)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[1]").value(bookDtoB)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[2]").doesNotExist()
+        );
+    }
+
+    @Test
     void testThatGetAllBooksReturnsEmptyListWhenBooksDoNotExist() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get(apiPath)
@@ -136,6 +167,23 @@ public class BookControllerIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    void testThatGetBookByIdReturnsBookWhenBookExists() throws Exception {
+        AuthorEntity authorA = TestDataUtil.createTestAuthorA();
+        authorA = authorService.create(authorA);
+
+        BookEntity bookA = TestDataUtil.createTestBookA(authorA);
+        bookA = bookService.create(bookA);
+        BookDto bookDtoA = bookMapper.mapTo(bookA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(apiPath + "/" + bookA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$").value(bookDtoA)
         );
     }
 
