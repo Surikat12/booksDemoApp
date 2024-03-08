@@ -61,7 +61,7 @@ public class BookServiceImpl implements BookService {
 
         return bookRepository.findById(id).map(existingBook -> {
             Optional.ofNullable(book.getTitle()).ifPresent(existingBook::setTitle);
-            Optional.ofNullable(book.getYearPublished()).ifPresent(existingBook::setYearPublished);
+            Optional.ofNullable(book.getDescription()).ifPresent(existingBook::setDescription);
             Optional.ofNullable(book.getAuthor()).ifPresent(existingBook::setAuthor);
             return bookRepository.save(existingBook);
         }).orElseThrow(() -> new RuntimeException("Book with id " + id + " does not exists"));

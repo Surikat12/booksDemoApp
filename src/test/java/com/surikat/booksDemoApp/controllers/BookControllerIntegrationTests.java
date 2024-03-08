@@ -37,8 +37,10 @@ public class BookControllerIntegrationTests {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public BookControllerIntegrationTests(BookService bookService, AuthorService authorService,
-                                          MockMvc mockMvc, Mapper<BookEntity, BookDto> bookMapper,
+    public BookControllerIntegrationTests(BookService bookService,
+                                          AuthorService authorService,
+                                          MockMvc mockMvc,
+                                          Mapper<BookEntity, BookDto> bookMapper,
                                           Mapper<AuthorEntity, AuthorDto> authorMapper,
                                           ObjectMapper objectMapper) {
         this.bookService = bookService;
@@ -87,7 +89,7 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookA.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookA.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookA.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(authorDtoA)
         );
@@ -192,7 +194,7 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookB.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookB.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookB.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(bookB.getAuthor())
         );
@@ -264,14 +266,14 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookB.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookA.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookA.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(authorDtoA)
         );
     }
 
     @Test
-    void testThatPartialUpdateYearOfBookReturnsUpdatedBook() throws Exception {
+    void testThatPartialUpdateDescriptionOfBookReturnsUpdatedBook() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
         authorA = authorService.create(authorA);
         AuthorDto authorDtoA = authorMapper.mapTo(authorA);
@@ -283,7 +285,7 @@ public class BookControllerIntegrationTests {
 
         BookEntity bookB = BookEntity.builder()
                 .id(bookA.getId() + 1)
-                .yearPublished("UPDATED")
+                .description("UPDATED")
                 .build();
 
         BookDto bookDtoB = bookMapper.mapTo(bookB);
@@ -298,7 +300,7 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookA.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookB.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookB.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(authorDtoA)
         );
@@ -335,7 +337,7 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookA.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookA.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookA.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(authorDtoB)
         );
@@ -373,7 +375,7 @@ public class BookControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookB.getTitle())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.year").value(bookA.getYearPublished())
+                MockMvcResultMatchers.jsonPath("$.description").value(bookA.getDescription())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.author").value(authorDtoB)
         );

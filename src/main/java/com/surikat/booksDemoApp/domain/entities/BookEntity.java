@@ -20,9 +20,9 @@ public class BookEntity {
 
     private String title;
 
+    private String description;
+
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "author_id")
     private AuthorEntity author;
-
-    private String yearPublished;
 }

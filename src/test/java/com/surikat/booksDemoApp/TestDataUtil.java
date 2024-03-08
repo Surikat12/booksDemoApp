@@ -31,27 +31,24 @@ public class TestDataUtil {
 
     public static BookEntity createTestBookA(AuthorEntity authorEntity) {
         return BookEntity.builder()
-                .id(1L)
                 .title("Book A")
-                .yearPublished("2018")
+                .description("Description of Book A")
                 .author(authorEntity)
                 .build();
     }
 
     public static BookEntity createTestBookB(AuthorEntity authorEntity) {
         return BookEntity.builder()
-                .id(2L)
                 .title("Book B")
-                .yearPublished("2019")
+                .description("Description of Book B")
                 .author(authorEntity)
                 .build();
     }
 
     public static BookEntity createTestBookC(AuthorEntity authorEntity) {
         return BookEntity.builder()
-                .id(3L)
                 .title("Book C")
-                .yearPublished("2020")
+                .description("Description of Book C")
                 .author(authorEntity)
                 .build();
     }
