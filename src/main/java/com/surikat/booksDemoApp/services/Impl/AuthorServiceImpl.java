@@ -1,6 +1,5 @@
 package com.surikat.booksDemoApp.services.Impl;
 
-import com.surikat.booksDemoApp.domain.dto.AuthorDto;
 import com.surikat.booksDemoApp.domain.entities.AuthorEntity;
 import com.surikat.booksDemoApp.repositories.AuthorRepository;
 import com.surikat.booksDemoApp.services.AuthorService;
@@ -61,7 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         return authorRepository.findById(id).map(existingAuthor -> {
             Optional.ofNullable(author.getName()).ifPresent(existingAuthor::setName);
-            Optional.ofNullable(author.getAge()).ifPresent(existingAuthor::setAge);
+            Optional.ofNullable(author.getBirthdate()).ifPresent(existingAuthor::setBirthdate);
             return authorRepository.save(existingAuthor);
         }).orElseThrow(() -> new RuntimeException("Author with id " + id + " does not exists"));
     }

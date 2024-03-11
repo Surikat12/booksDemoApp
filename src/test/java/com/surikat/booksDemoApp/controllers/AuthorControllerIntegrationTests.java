@@ -32,7 +32,8 @@ public class AuthorControllerIntegrationTests {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public AuthorControllerIntegrationTests(AuthorService authorService, MockMvc mockMvc,
+    public AuthorControllerIntegrationTests(AuthorService authorService,
+                                            MockMvc mockMvc,
                                             Mapper<AuthorEntity, AuthorDto> authorMapper,
                                             ObjectMapper objectMapper) {
         this.authorService = authorService;
@@ -44,7 +45,6 @@ public class AuthorControllerIntegrationTests {
     @Test
     void testThatCreateAuthorSuccessfullyReturnsHttpStatus201() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
-        authorA.setId(null);
 
         AuthorDto authorDtoA = authorMapper.mapTo(authorA);
         String authorJson = objectMapper.writeValueAsString(authorDtoA);
@@ -61,10 +61,11 @@ public class AuthorControllerIntegrationTests {
     @Test
     void testThatCreateAuthorSuccessfullyReturnsSavedAuthor() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
-        authorA.setId(null);
 
         AuthorDto authorDtoA = authorMapper.mapTo(authorA);
         String authorJson = objectMapper.writeValueAsString(authorDtoA);
+
+        authorA = authorMapper.mapFrom(authorDtoA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post(apiPath)
@@ -75,7 +76,7 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorA.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.age").value(authorA.getAge())
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorA.getBirthdate().toString())
         );
     }
 
@@ -93,11 +94,9 @@ public class AuthorControllerIntegrationTests {
     void testThatGetAllAuthorsReturnsListOfAllAuthorsWhenTheyExist() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
         authorA = authorService.create(authorA);
-        AuthorDto authorDtoA = authorMapper.mapTo(authorA);
 
         AuthorEntity authorB = TestDataUtil.createTestAuthorB();
         authorB = authorService.create(authorB);
-        AuthorDto authorDtoB = authorMapper.mapTo(authorB);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(apiPath)
@@ -109,9 +108,17 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.totalElements").value(2)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.content[0]").value(authorDtoA)
+                MockMvcResultMatchers.jsonPath("$.content[0].id").value(authorA.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.content[1]").value(authorDtoB)
+                MockMvcResultMatchers.jsonPath("$.content[0].name").value(authorA.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[0].birthdate").value(authorA.getBirthdate().toString())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[1].id").value(authorB.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[1].name").value(authorB.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.content[1].birthdate").value(authorB.getBirthdate().toString())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.content[2]").doesNotExist()
         );
@@ -150,13 +157,16 @@ public class AuthorControllerIntegrationTests {
     void testThatGetAuthorByIdReturnsAuthorWhenAuthorExists() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
         authorA = authorService.create(authorA);
-        AuthorDto authorDtoA = authorMapper.mapTo(authorA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(apiPath + "/" + authorA.getId())
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$").value(authorDtoA)
+                MockMvcResultMatchers.jsonPath("$.id").value(authorA.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(authorA.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorA.getBirthdate().toString())
         );
     }
 
@@ -205,7 +215,7 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorB.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.age").value(authorB.getAge())
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorB.getBirthdate().toString())
         );
     }
 
@@ -262,18 +272,18 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorB.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.age").value(authorA.getAge())
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorA.getBirthdate().toString())
         );
     }
 
     @Test
-    void testThatPartialUpdateAgeOfAuthorReturnsUpdatedAuthor() throws Exception {
+    void testThatPartialUpdateBirthdateOfAuthorReturnsUpdatedAuthor() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
         authorA = authorService.create(authorA);
 
         AuthorEntity authorB = AuthorEntity.builder()
                 .id(authorA.getId() + 1)
-                .age(authorA.getAge() + 1)
+                .birthdate(authorA.getBirthdate().plusYears(10))
                 .build();
 
         AuthorDto authorDtoB = authorMapper.mapTo(authorB);
@@ -288,19 +298,19 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorA.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.age").value(authorB.getAge())
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorB.getBirthdate().toString())
         );
     }
 
     @Test
-    void testThatPartialUpdateNameAndAgeOfAuthorReturnsUpdatedAuthor() throws Exception {
+    void testThatPartialUpdateNameAndBirthdateOfAuthorReturnsUpdatedAuthor() throws Exception {
         AuthorEntity authorA = TestDataUtil.createTestAuthorA();
         authorA = authorService.create(authorA);
 
         AuthorEntity authorB = AuthorEntity.builder()
                 .id(authorA.getId() + 1)
                 .name("UPDATED")
-                .age(authorA.getAge() + 1)
+                .birthdate(authorA.getBirthdate().plusYears(10))
                 .build();
 
         AuthorDto authorDtoB = authorMapper.mapTo(authorB);
@@ -315,7 +325,7 @@ public class AuthorControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorB.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.age").value(authorB.getAge())
+                MockMvcResultMatchers.jsonPath("$.birthdate").value(authorB.getBirthdate().toString())
         );
     }
 

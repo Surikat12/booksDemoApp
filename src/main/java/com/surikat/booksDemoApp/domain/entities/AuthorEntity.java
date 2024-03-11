@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="authors")
+@Table(name = "authors")
 public class AuthorEntity {
 
     @Id
@@ -20,5 +22,5 @@ public class AuthorEntity {
 
     private String name;
 
-    private Integer age;
+    private LocalDate birthdate;
 }

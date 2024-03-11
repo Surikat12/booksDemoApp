@@ -3,29 +3,28 @@ package com.surikat.booksDemoApp;
 import com.surikat.booksDemoApp.domain.entities.AuthorEntity;
 import com.surikat.booksDemoApp.domain.entities.BookEntity;
 
+import java.time.LocalDate;
+
 
 public class TestDataUtil {
     public static AuthorEntity createTestAuthorA() {
         return AuthorEntity.builder()
-                .id(1L)
                 .name("Author A")
-                .age(50)
+                .birthdate(LocalDate.of(1910, 1, 18))
                 .build();
     }
 
     public static AuthorEntity createTestAuthorB() {
         return AuthorEntity.builder()
-                .id(2L)
                 .name("Author B")
-                .age(42)
+                .birthdate(LocalDate.of(1968, 5, 3))
                 .build();
     }
 
     public static AuthorEntity createTestAuthorC() {
         return AuthorEntity.builder()
-                .id(3L)
                 .name("Author C")
-                .age(63)
+                .birthdate(LocalDate.of(1890, 7, 25))
                 .build();
     }
 
