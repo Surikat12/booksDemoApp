@@ -20,7 +20,9 @@ public class AuthorEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
     private Long id;
 
+    @Column(nullable = false, length = 64)
     private String name;
 
+    @Column(nullable = false)
     private LocalDate birthdate;
 }

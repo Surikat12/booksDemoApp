@@ -18,11 +18,13 @@ public class BookEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_id_seq")
     private Long id;
 
+    @Column(nullable = false, length = 128)
     private String title;
 
+    @Column(nullable = false, length = 512)
     private String description;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "author_id")
+    @JoinColumn(nullable = false, name = "author_id")
     private AuthorEntity author;
 }
