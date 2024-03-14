@@ -1,17 +1,16 @@
 package com.surikat.booksDemoApp.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
+@ToString
 @Entity
 @Table(name = "authors")
 public class AuthorEntity {
@@ -25,4 +24,25 @@ public class AuthorEntity {
 
     @Column(nullable = false)
     private LocalDate birthdate;
+
+    @Override
+    public int hashCode() {
+        return 42;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AuthorEntity other = (AuthorEntity) obj;
+        if (id == null) {
+            return false;
+        } else {
+            return id.equals(other.id);
+        }
+    }
 }
