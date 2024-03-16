@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ModelMapper.class, AuthorMapperImpl.class})
@@ -29,14 +28,8 @@ class BookMapperImplTests {
         this.authorMapper = authorMapper;
     }
 
-    private void assertThatAuthorDtoEqualsAuthorEntity(AuthorDto authorDto, AuthorEntity authorEntity) {
-        assertThat(authorDto.getId()).isEqualTo(authorEntity.getId());
-        assertThat(authorDto.getName()).isEqualTo(authorEntity.getName());
-        assertThat(authorDto.getBirthdate()).isEqualTo(authorEntity.getBirthdate());
-    }
-
     @Test
-    void testThatMapToCorrectlyMapBookWithAllPropertiesToBookDto() {
+    void testThatMapToCorrectlyMapsBookWithAllPropertiesToBookDto() {
         //given
         AuthorEntity author = TestDataUtil.createTestAuthorA();
         author.setId(1L);
@@ -47,10 +40,7 @@ class BookMapperImplTests {
         BookDto bookDto = underTest.mapTo(book);
 
         //then
-        assertThat(bookDto.getId()).isEqualTo(book.getId());
-        assertThat(bookDto.getTitle()).isEqualTo(book.getTitle());
-        assertThat(bookDto.getDescription()).isEqualTo(book.getDescription());
-        assertThatAuthorDtoEqualsAuthorEntity(bookDto.getAuthor(), author);
+        assertThat(bookDto).usingRecursiveComparison().isEqualTo(book);
     }
 
     @Test
@@ -65,9 +55,7 @@ class BookMapperImplTests {
 
         //then
         assertThat(bookDto.getId()).isNull();
-        assertThat(bookDto.getTitle()).isEqualTo(book.getTitle());
-        assertThat(bookDto.getDescription()).isEqualTo(book.getDescription());
-        assertThatAuthorDtoEqualsAuthorEntity(bookDto.getAuthor(), author);
+        assertThat(bookDto).usingRecursiveComparison().isEqualTo(book);
     }
 
     @Test
@@ -90,7 +78,7 @@ class BookMapperImplTests {
         BookEntity mappedBook = underTest.mapFrom(bookDto);
 
         //then
-        assertThat(mappedBook).isEqualTo(realBook);
+        assertThat(mappedBook).usingRecursiveComparison().isEqualTo(realBook);
     }
 
     @Test
@@ -112,6 +100,10 @@ class BookMapperImplTests {
         BookEntity mappedBook = underTest.mapFrom(bookDto);
 
         //then
-        assertThat(mappedBook).isEqualTo(realBook);
+        assertThat(mappedBook.getId()).isNull();
+        assertThat(mappedBook)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(realBook);
     }
 }

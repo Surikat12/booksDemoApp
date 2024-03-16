@@ -33,9 +33,7 @@ class AuthorMapperImplTests {
         AuthorDto authorDto = underTest.mapTo(author);
 
         //then
-        assertThat(authorDto.getId()).isEqualTo(author.getId());
-        assertThat(authorDto.getName()).isEqualTo(author.getName());
-        assertThat(authorDto.getBirthdate()).isEqualTo(author.getBirthdate());
+        assertThat(authorDto).usingRecursiveComparison().isEqualTo(author);
     }
 
     @Test
@@ -48,8 +46,10 @@ class AuthorMapperImplTests {
 
         //then
         assertThat(authorDto.getId()).isNull();
-        assertThat(authorDto.getName()).isEqualTo(author.getName());
-        assertThat(authorDto.getBirthdate()).isEqualTo(author.getBirthdate());
+        assertThat(authorDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(author);
     }
 
     @Test
@@ -68,7 +68,7 @@ class AuthorMapperImplTests {
         AuthorEntity mappedAuthor = underTest.mapFrom(authorDto);
 
         //then
-        assertThat(mappedAuthor).isEqualTo(realAuthor);
+        assertThat(mappedAuthor).usingRecursiveComparison().isEqualTo(realAuthor);
     }
 
     @Test
@@ -84,6 +84,10 @@ class AuthorMapperImplTests {
         AuthorEntity mappedAuthor = underTest.mapFrom(authorDto);
 
         //then
-        assertThat(mappedAuthor).isEqualTo(realAuthor);
+        assertThat(mappedAuthor.getId()).isNull();
+        assertThat(mappedAuthor)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(realAuthor);
     }
 }
